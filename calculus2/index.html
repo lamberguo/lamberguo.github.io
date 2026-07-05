@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AMAT113 Calculus II | Summer 2026</title>
+  <style>
+    :root {
+      --bg: #f7f8fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --warning: #fff7ed;
+      --warning-border: #fb923c;
+      --exam: #fee2e2;
+      --exam-text: #991b1b;
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    body.dark {
+      --bg: #0f172a;
+      --card: #111827;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --line: #374151;
+      --accent: #60a5fa;
+      --accent-soft: #1e3a8a;
+      --warning: #29200f;
+      --warning-border: #f97316;
+      --exam: #3f1515;
+      --exam-text: #fecaca;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 56px 20px 34px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      letter-spacing: -0.04em;
+    }
+
+    header p { margin: 10px 0 0; font-size: 1.1rem; opacity: 0.95; }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    body.dark nav { background: rgba(15,23,42,0.85); }
+
+    nav a, button {
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 999px;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    nav a:hover, button:hover { border-color: var(--accent); color: var(--accent); }
+
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px 18px 70px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: -48px;
+    }
+
+    .card, .week, .topic-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .card { padding: 22px; }
+    .card h3, section h2 { margin-top: 0; }
+    .muted { color: var(--muted); }
+
+    .notice {
+      margin: 24px 0;
+      padding: 18px 20px;
+      background: var(--warning);
+      border-left: 6px solid var(--warning-border);
+      border-radius: 18px;
+    }
+
+    .progress-wrap { margin-top: 14px; }
+    .progress-bar {
+      height: 14px;
+      background: var(--line);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #22c55e, #2563eb);
+      transition: width 0.5s ease;
+    }
+
+    #todayBox {
+      margin: 22px 0;
+      padding: 22px;
+      border: 2px solid var(--accent);
+      background: var(--accent-soft);
+      border-radius: 24px;
+    }
+
+    .search {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--card);
+      color: var(--text);
+      font-size: 1rem;
+      margin: 8px 0 20px;
+    }
+
+    .week {
+      margin: 22px 0;
+      padding: 20px;
+    }
+
+    .week h2 {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+    }
+
+    .topic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+      gap: 14px;
+    }
+
+    .topic-card {
+      padding: 16px;
+      box-shadow: none;
+    }
+
+    .topic-card.today {
+      outline: 3px solid var(--accent);
+    }
+
+    .topic-card.exam {
+      background: var(--exam);
+      color: var(--exam-text);
+    }
+
+    .date {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-bottom: 8px;
+    }
+
+    .topic-title {
+      font-weight: 750;
+      font-size: 1.05rem;
+      margin-bottom: 10px;
+    }
+
+    .tag {
+      display: inline-block;
+      margin: 4px 4px 0 0;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--text);
+      font-size: 0.84rem;
+    }
+
+    .topic-card a {
+      display: inline-block;
+      margin-top: 10px;
+      color: var(--accent);
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    .topic-card a:hover { text-decoration: underline; }
+
+    .resources ul { columns: 2; }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 30px;
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 760px) {
+      .grid { grid-template-columns: 1fr; margin-top: -26px; }
+      nav { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; }
+      .resources ul { columns: 1; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AMAT113 Calculus II</h1>
+    <p>Summer 2026 · July 6 – August 14 · Six-Week Online Schedule</p>
+  </header>
+
+  <nav>
+    <a href="#overview">Overview</a>
+    <a href="#schedule">Schedule</a>
+    <a href="#homework">Homework</a>
+    <a href="#resources">Resources</a>
+    <button id="themeBtn" type="button">🌙 Dark Mode</button>
+  </nav>
+
+  <main>
+    <section id="overview" class="grid">
+      <div class="card">
+        <h3>Office Hours</h3>
+        <p><strong>Daily Zoom:</strong><br>11:00 AM – 12:00 PM</p>
+        <p class="muted">For additional help, please email me to schedule an appointment.</p>
+      </div>
+      <div class="card">
+        <h3>Course Format</h3>
+        <p>This is a fast-paced summer course with no daily lectures. Students should follow the schedule and study the assigned materials independently.</p>
+      </div>
+      <div class="card">
+        <h3>Course Progress</h3>
+        <div class="progress-wrap">
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+          <p id="progressText" class="muted">Calculating...</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="notice">
+      <strong>Important:</strong> Please check this schedule regularly. Because this course is accelerated, staying current with the assigned OpenStax sections, homework, and quizzes is essential.
+    </div>
+
+    <section id="todayBox">
+      <h2>Today</h2>
+      <div id="todayContent" class="muted">Loading today’s topic...</div>
+    </section>
+
+    <section id="schedule">
+      <h2>Schedule</h2>
+      <input class="search" id="searchInput" type="search" placeholder="Search topics, e.g. Taylor, shells, improper integrals..." />
+      <div id="scheduleContainer"></div>
+    </section>
+
+    <section id="homework" class="card">
+      <h2>Homework and Assessments</h2>
+      <p><strong>HW1:</strong> Sections 1.1–1.3 due Friday 7/10; Quiz 1</p>
+      <p><strong>HW2:</strong> Sections 1.4–1.7 due Friday 7/17; Quiz 2</p>
+      <p><strong>HW3:</strong> Sections 2.1–2.3 and 3.1 due Monday 7/20</p>
+      <p><strong>Exam 1:</strong> Tuesday 7/21; covers Chapters 1–2 and Section 3.1</p>
+      <p><strong>HW4:</strong> Sections 3.2–3.7 due Friday 7/24; Quiz 3</p>
+      <p><strong>Exam 2:</strong> Friday 7/31; covers Sections 3.2–3.7 and 5.1–5.3</p>
+      <p><strong>HW5:</strong> Sections 5.1–5.6 due Friday 8/7; Quiz 4</p>
+      <p><strong>HW6:</strong> Sections 6.1–6.3 due Thursday 8/13; Quiz 5</p>
+      <p><strong>HW7:</strong> Sections 7.1–7.3 due Friday 8/14</p>
+      <p><strong>Final Exam / Course Completion:</strong> Friday 8/14</p>
+    </section>
+
+    <section id="resources" class="card resources">
+      <h2>Useful Resources</h2>
+      <ul>
+        <li><a href="https://openstax.org/books/calculus-volume-2/pages/1-introduction" target="_blank" rel="noopener">OpenStax Calculus Volume 2</a></li>
+        <li><a href="https://tutorial.math.lamar.edu/classes/calcii/calcii.aspx" target="_blank" rel="noopener">Paul's Online Notes: Calculus II</a></li>
+        <li><a href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Desmos Graphing Calculator</a></li>
+        <li><a href="https://www.wolframalpha.com/" target="_blank" rel="noopener">WolframAlpha</a></li>
+        <li><a href="https://www.khanacademy.org/math/ap-calculus-bc" target="_blank" rel="noopener">Khan Academy Calculus</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    AMAT113 Calculus II · Summer 2026
+  </footer>
+
+  <script>
+    const topics = [
+      {week:1, date:'2026-07-06', day:'Mon', title:'1.1 Approximating Areas', hw:'PA1', url:'https://openstax.org/books/calculus-volume-2/pages/1-1-approximating-areas'},
+      {week:1, date:'2026-07-07', day:'Tue', title:'1.2 The Definite Integral', hw:'', url:'https://openstax.org/books/calculus-volume-2/pages/1-2-the-definite-integral'},
+      {week:1, date:'2026-07-08', day:'Wed', title:'1.3 The Fundamental Theorem of Calculus', hw:'PA2', url:'https://openstax.org/books/calculus-volume-2/pages/1-3-the-fundamental-theorem-of-calculus'},
+      {week:1, date:'2026-07-09', day:'Thu', title:'1.4 Integration Formulas and the Net Change Theorem', hw:'', url:'https://openstax.org/books/calculus-volume-2/pages/1-4-integration-formulas-and-the-net-change-theorem'},
+      {week:1, date:'2026-07-10', day:'Fri', title:'1.5 Substitution', hw:'HW1 due; Quiz 1', url:'https://openstax.org/books/calculus-volume-2/pages/1-5-substitution'},
+
+      {week:2, date:'2026-07-13', day:'Mon', title:'1.6 Integrals Involving Exponential and Logarithmic Functions', hw:'PA3', url:'https://openstax.org/books/calculus-volume-2/pages/1-6-integrals-involving-exponential-and-logarithmic-functions'},
+      {week:2, date:'2026-07-14', day:'Tue', title:'1.7 Integrals Resulting in Inverse Trigonometric Functions', hw:'', url:'https://openstax.org/books/calculus-volume-2/pages/1-7-integrals-resulting-in-inverse-trigonometric-functions'},
+      {week:2, date:'2026-07-15', day:'Wed', title:'3.1 Integration by Parts', hw:'PA6', url:'https://openstax.org/books/calculus-volume-2/pages/3-1-integration-by-parts'},
+      {week:2, date:'2026-07-16', day:'Thu', title:'2.1 Areas Between Curves', hw:'PA4', url:'https://openstax.org/books/calculus-volume-2/pages/2-1-areas-between-curves'},
+      {week:2, date:'2026-07-17', day:'Fri', title:'2.2 Determining Volumes by Slicing', hw:'HW2 due; Quiz 2', url:'https://openstax.org/books/calculus-volume-2/pages/2-2-determining-volumes-by-slicing'},
+
+      {week:3, date:'2026-07-20', day:'Mon', title:'2.3 Volumes of Revolution: Cylindrical Shells', hw:'PA5; HW3 due', url:'https://openstax.org/books/calculus-volume-2/pages/2-3-volumes-of-revolution-cylindrical-shells'},
+      {week:3, date:'2026-07-21', day:'Tue', title:'Exam 1', hw:'Covers Chapters 1–2 and Section 3.1', exam:true},
+      {week:3, date:'2026-07-22', day:'Wed', title:'3.2 Trigonometric Integrals', hw:'', url:'https://openstax.org/books/calculus-volume-2/pages/3-2-trigonometric-integrals'},
+      {week:3, date:'2026-07-23', day:'Thu', title:'3.3 Trigonometric Substitution', hw:'PA7', url:'https://openstax.org/books/calculus-volume-2/pages/3-3-trigonometric-substitution'},
+      {week:3, date:'2026-07-24', day:'Fri', title:'3.4 Partial Fractions', hw:'PA8; HW4 due; Quiz 3', url:'https://openstax.org/books/calculus-volume-2/pages/3-4-partial-fractions'},
+
+      {week:4, date:'2026-07-27', day:'Mon', title:'3.7 Improper Integrals', hw:'PA9', url:'https://openstax.org/books/calculus-volume-2/pages/3-7-improper-integrals'},
+      {week:4, date:'2026-07-28', day:'Tue', title:'5.1 Sequences', hw:'PA10', url:'https://openstax.org/books/calculus-volume-2/pages/5-1-sequences'},
+      {week:4, date:'2026-07-29', day:'Wed', title:'5.2 Infinite Series', hw:'PA11', url:'https://openstax.org/books/calculus-volume-2/pages/5-2-infinite-series'},
+      {week:4, date:'2026-07-30', day:'Thu', title:'5.3 The Divergence and Integral Tests', hw:'PA12', url:'https://openstax.org/books/calculus-volume-2/pages/5-3-the-divergence-and-integral-tests'},
+      {week:4, date:'2026-07-31', day:'Fri', title:'Exam 2', hw:'Covers Sections 3.2–3.7 and 5.1–5.3', exam:true},
+
+      {week:5, date:'2026-08-03', day:'Mon', title:'5.4 Comparison Tests', hw:'PA13', url:'https://openstax.org/books/calculus-volume-2/pages/5-4-comparison-tests'},
+      {week:5, date:'2026-08-04', day:'Tue', title:'5.5 Alternating Series', hw:'PA14', url:'https://openstax.org/books/calculus-volume-2/pages/5-5-alternating-series'},
+      {week:5, date:'2026-08-05', day:'Wed', title:'5.6 Ratio and Root Tests', hw:'PA15', url:'https://openstax.org/books/calculus-volume-2/pages/5-6-ratio-and-root-tests'},
+      {week:5, date:'2026-08-06', day:'Thu', title:'6.1 Power Series and Functions', hw:'PA16', url:'https://openstax.org/books/calculus-volume-2/pages/6-1-power-series-and-functions'},
+      {week:5, date:'2026-08-07', day:'Fri', title:'6.2 Properties of Power Series', hw:'PA17; HW5 due; Quiz 4', url:'https://openstax.org/books/calculus-volume-2/pages/6-2-properties-of-power-series'},
+
+      {week:6, date:'2026-08-10', day:'Mon', title:'6.3 Taylor and Maclaurin Series', hw:'PA18', url:'https://openstax.org/books/calculus-volume-2/pages/6-3-taylor-and-maclaurin-series'},
+      {week:6, date:'2026-08-11', day:'Tue', title:'7.1 Parametric Equations', hw:'PA19', url:'https://openstax.org/books/calculus-volume-2/pages/7-1-parametric-equations'},
+      {week:6, date:'2026-08-12', day:'Wed', title:'7.2 Calculus of Parametric Curves', hw:'PA20', url:'https://openstax.org/books/calculus-volume-2/pages/7-2-calculus-of-parametric-curves'},
+      {week:6, date:'2026-08-13', day:'Thu', title:'7.3 Polar Coordinates', hw:'HW6 due; Quiz 5', url:'https://openstax.org/books/calculus-volume-2/pages/7-3-polar-coordinates'},
+      {week:6, date:'2026-08-14', day:'Fri', title:'Final Exam / Course Completion', hw:'HW7 due', exam:true}
+    ];
+
+    const container = document.getElementById('scheduleContainer');
+    const todayContent = document.getElementById('todayContent');
+    const searchInput = document.getElementById('searchInput');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+
+    function formatDate(dateString) {
+      const d = new Date(dateString + 'T12:00:00');
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    function cardHTML(item) {
+      const todayISO = new Date().toISOString().slice(0,10);
+      const isToday = item.date === todayISO;
+      return `<div class="topic-card ${item.exam ? 'exam' : ''} ${isToday ? 'today' : ''}" data-search="${(item.title + ' ' + item.hw).toLowerCase()}">
+        <div class="date">${item.day} · ${formatDate(item.date)}</div>
+        <div class="topic-title">${item.title}</div>
+        ${item.hw ? `<span class="tag">${item.hw}</span>` : ''}
+        ${item.url ? `<br><a href="${item.url}" target="_blank" rel="noopener">📖 OpenStax Reading</a>` : ''}
+      </div>`;
+    }
+
+    function renderSchedule(filter = '') {
+      container.innerHTML = '';
+      for (let w = 1; w <= 6; w++) {
+        const weekItems = topics.filter(t => t.week === w && (t.title + ' ' + t.hw).toLowerCase().includes(filter.toLowerCase()));
+        if (!weekItems.length) continue;
+        const week = document.createElement('div');
+        week.className = 'week';
+        week.innerHTML = `<h2><span>Week ${w}</span><span class="muted">${formatDate(weekItems[0].date)} – ${formatDate(weekItems[weekItems.length - 1].date)}</span></h2>
+          <div class="topic-grid">${weekItems.map(cardHTML).join('')}</div>`;
+        container.appendChild(week);
+      }
+    }
+
+    function renderToday() {
+      const todayISO = new Date().toISOString().slice(0,10);
+      let item = topics.find(t => t.date === todayISO);
+      if (!item) {
+        const today = new Date(todayISO + 'T12:00:00');
+        item = topics.find(t => new Date(t.date + 'T12:00:00') > today) || topics[topics.length - 1];
+        todayContent.innerHTML = `<p>No scheduled topic today. Next scheduled item:</p>${cardHTML(item)}`;
+      } else {
+        todayContent.innerHTML = cardHTML(item);
+      }
+    }
+
+    function renderProgress() {
+      const start = new Date('2026-07-06T00:00:00');
+      const end = new Date('2026-08-14T23:59:59');
+      const now = new Date();
+      let pct = ((now - start) / (end - start)) * 100;
+      pct = Math.max(0, Math.min(100, pct));
+      progressFill.style.width = pct.toFixed(0) + '%';
+      progressText.textContent = pct.toFixed(0) + '% complete';
+    }
+
+    searchInput.addEventListener('input', e => renderSchedule(e.target.value));
+
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      const dark = document.body.classList.contains('dark');
+      localStorage.setItem('calc2-dark', dark ? '1' : '0');
+      document.getElementById('themeBtn').textContent = dark ? '☀️ Light Mode' : '🌙 Dark Mode';
+    });
+
+    if (localStorage.getItem('calc2-dark') === '1') {
+      document.body.classList.add('dark');
+      document.getElementById('themeBtn').textContent = '☀️ Light Mode';
+    }
+
+    renderSchedule();
+    renderToday();
+    renderProgress();
+  </script>
+</body>
+</html>
